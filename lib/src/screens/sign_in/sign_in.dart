@@ -200,6 +200,10 @@ class _SignInScreenState extends State<SignInScreen> {
                         borderRadius: 1,
                         onPressed: _onSignup,
                         filled: false,
+                        suffix: SvgPicture.asset(
+                          'lib/assets/icons/arrow-right.svg',
+                          color: primaryColor,
+                        ),
                       ),
                     ],
                   ),
@@ -212,7 +216,9 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void _onSignIn() {}
+  void _onSignIn() {
+    Get.toNamed(RouteConfig.HOME);
+  }
 
   void _onSignup() {
     Get.toNamed(RouteConfig.SIGN_UP);

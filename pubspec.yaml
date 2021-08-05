@@ -29,6 +29,7 @@ flutter:
 
   assets:
     - lib/assets/images/splash_screen/
+    - lib/assets/images/home_screen/
     - lib/assets/images/app/
     - lib/assets/icons/
 

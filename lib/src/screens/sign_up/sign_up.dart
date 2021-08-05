@@ -63,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: getAppBar(
+        appBar: getPrimaryAppBar(
           title: 'Sign Up'.toUpperCase(),
         ),
         body: SingleChildScrollView(
