@@ -2,14 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:my_story/src/components/appbar.dart';
+import 'package:my_story/src/models/story.dart';
 import 'package:my_story/src/screens/home/widgets/empty_story.dart';
-import 'package:my_story/src/screens/home/widgets/story_item.dart';
+import 'package:my_story/src/screens/home/widgets/story_list.dart';
 import 'package:my_story/src/themes/color.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
-  bool _isEmpty = false;
+  var _list = [
+    Story(
+        id: 1,
+        createdDate: DateTime.now(),
+        title:
+            'Today is the 18th date since Covid-19 disease, hope all will be alright!'),
+    Story(
+        id: 2,
+        createdDate: DateTime.now(),
+        title: 'Everything is boring, so I deciced to do something!'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -78,13 +89,18 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              _isEmpty
+              SizedBox(
+                height: 10,
+              ),
+              _list.isEmpty
                   ? Container(
                       width: Get.width,
                       height: Get.height * 0.6,
                       child: EmptyStory(),
                     )
-                  : StoryItem(),
+                  : StoryList(
+                      stories: _list,
+                    ),
             ],
           ),
         ),
