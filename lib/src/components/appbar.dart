@@ -7,13 +7,17 @@ AppBar getPrimaryAppBar({
   String title = '',
   List<Widget>? actions,
   TextStyle? titleStyle,
+  Color bgColor = Colors.white,
+  Color backActionColor = Colors.black,
 }) {
   return AppBar(
+    backgroundColor: bgColor,
     leading: hasBackAction
         ? IconButton(
             icon: Icon(
               Icons.arrow_back,
               size: 30,
+              color: backActionColor,
             ),
             onPressed: () {
               Get.back();
@@ -34,8 +38,10 @@ AppBar getAppBar({
   Widget? leading,
   List<Widget>? actions,
   TextStyle? titleStyle,
+  Color bgColor = Colors.white,
 }) {
   return AppBar(
+    backgroundColor: bgColor,
     leading: hasBackAction
         ? IconButton(
             icon: Icon(
