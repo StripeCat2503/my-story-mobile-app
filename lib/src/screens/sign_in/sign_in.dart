@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:my_story/src/components/app_logo.dart';
 import 'package:my_story/src/components/button.dart';
 import 'package:my_story/src/config/route_config.dart';
+import 'package:my_story/src/controllers/sign_in/sign_in_controller.dart';
 import 'package:my_story/src/themes/color.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -20,8 +21,10 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
   final _passwordFocusNode = FocusNode();
 
-  Color _usernamePrefixIconColor = blackDarkColor;
-  Color _passwordPrefixIconColor = blackDarkColor;
+  Color _usernamePrefixIconColor = grayLightColor;
+  Color _passwordPrefixIconColor = grayLightColor;
+
+  final _controller = Get.find<SignInController>();
 
   @override
   void initState() {
@@ -90,95 +93,13 @@ class _SignInScreenState extends State<SignInScreen> {
                     children: [
                       Container(
                         margin: EdgeInsets.only(bottom: 11),
-                        child: TextFormField(
-                          controller: _usernameController,
-                          focusNode: _usernameFocusNode,
-                          style: TextStyle(fontSize: 14),
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            hintText: 'Username',
-                            hintStyle: TextStyle(
-                              color: grayLightColor,
-                              fontSize: 14,
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: blackDarkColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(1),
-                            ),
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.all(9.0),
-                              child: SvgPicture.asset(
-                                'lib/assets/icons/user.svg',
-                                color: _usernamePrefixIconColor,
-                              ),
-                            ),
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 16,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: primaryLightColor,
-                              ),
-                            ),
-                            focusColor: primaryLightColor,
-                          ),
-                        ),
+                        child: _buildUsernameField(),
                       ),
                       Container(
                         margin: EdgeInsets.only(bottom: 16),
-                        child: TextFormField(
-                          controller: _passwordController,
-                          focusNode: _passwordFocusNode,
-                          obscureText: true,
-                          obscuringCharacter: '•',
-                          style: TextStyle(fontSize: 14),
-                          decoration: InputDecoration(
-                            hintText: 'Password',
-                            hintStyle: TextStyle(
-                              color: grayLightColor,
-                              fontSize: 14,
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: blackDarkColor,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(1),
-                            ),
-                            prefixIcon: Padding(
-                              padding: const EdgeInsets.all(9.0),
-                              child: SvgPicture.asset(
-                                'lib/assets/icons/password.svg',
-                                color: _passwordPrefixIconColor,
-                              ),
-                            ),
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 16,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: primaryLightColor,
-                              ),
-                            ),
-                            focusColor: primaryLightColor,
-                          ),
-                        ),
+                        child: _buildPasswordField(),
                       ),
-                      BaseButton(
-                        title: 'sign in'.toUpperCase(),
-                        color: primaryLightColor,
-                        textStyle: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                        borderRadius: 1,
-                        onPressed: _onSignIn,
-                      ),
+                      _buildSignInButton(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           vertical: 6,
@@ -190,21 +111,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
-                      BaseButton(
-                        title: 'sign up'.toUpperCase(),
-                        color: primaryLightColor,
-                        textStyle: TextStyle(
-                          fontSize: 14,
-                          color: primaryColor,
-                        ),
-                        borderRadius: 1,
-                        onPressed: _onSignup,
-                        filled: false,
-                        suffix: SvgPicture.asset(
-                          'lib/assets/icons/arrow-right.svg',
-                          color: primaryColor,
-                        ),
-                      ),
+                      _buildSignUpButton(),
                     ],
                   ),
                 )
@@ -216,11 +123,121 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void _onSignIn() {
-    Get.toNamed(RouteConfig.HOME);
+  BaseButton _buildSignUpButton() {
+    return BaseButton(
+      title: 'sign up'.toUpperCase(),
+      color: primaryLightColor,
+      textStyle: TextStyle(
+        fontSize: 14,
+        color: primaryColor,
+      ),
+      onPressed: _controller.navigateToSignUpScreen,
+      filled: false,
+      suffix: SvgPicture.asset(
+        'lib/assets/icons/arrow-right.svg',
+        color: primaryColor,
+      ),
+      borderRadius: 10,
+    );
   }
 
-  void _onSignup() {
-    Get.toNamed(RouteConfig.SIGN_UP);
+  BaseButton _buildSignInButton() {
+    return BaseButton(
+      title: 'sign in'.toUpperCase(),
+      color: primaryLightColor,
+      textStyle: TextStyle(
+        fontSize: 14,
+        color: Colors.white,
+      ),
+      borderRadius: 10,
+      onPressed: _controller.signIn,
+    );
+  }
+
+  TextFormField _buildPasswordField() {
+    return TextFormField(
+      controller: _passwordController,
+      focusNode: _passwordFocusNode,
+      obscureText: true,
+      obscuringCharacter: '•',
+      style: TextStyle(fontSize: 14),
+      decoration: InputDecoration(
+        hintText: 'Password',
+        hintStyle: TextStyle(
+          color: grayLightColor,
+          fontSize: 14,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: grayLightColor,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.all(9.0),
+          child: SvgPicture.asset(
+            'lib/assets/icons/password.svg',
+            color: _passwordPrefixIconColor,
+          ),
+        ),
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 16,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: primaryLightColor,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        focusColor: primaryLightColor,
+      ),
+    );
+  }
+
+  TextFormField _buildUsernameField() {
+    return TextFormField(
+      controller: _usernameController,
+      focusNode: _usernameFocusNode,
+      style: TextStyle(fontSize: 14),
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+        hintText: 'Username',
+        hintStyle: TextStyle(
+          color: grayLightColor,
+          fontSize: 14,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: grayLightColor,
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(
+            10,
+          ),
+        ),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.all(9.0),
+          child: SvgPicture.asset(
+            'lib/assets/icons/user.svg',
+            color: _usernamePrefixIconColor,
+          ),
+        ),
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 16,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: primaryLightColor,
+          ),
+          borderRadius: BorderRadius.circular(
+            10,
+          ),
+        ),
+        focusColor: primaryLightColor,
+      ),
+    );
   }
 }

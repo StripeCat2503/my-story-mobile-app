@@ -4,11 +4,11 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:image_editor/image_editor.dart';
 import 'package:my_story/main.dart';
 import 'package:my_story/src/components/appbar.dart';
 import 'package:my_story/src/components/image_preview.dart';
 import 'package:my_story/src/components/overlay_loading.dart';
-import 'package:my_story/src/controllers/components/camera_state_controller.dart';
 import 'package:my_story/src/controllers/new_story/new_story_controller.dart';
 import 'package:my_story/src/themes/color.dart';
 
@@ -302,9 +302,20 @@ class _CameraScreenShotState extends State<CameraScreenShot> {
     });
   }
 
-  void _save() {
+  void _save() async {
     if (_capturedImage != null) {
-      _newStoryController.addImageBlock(_capturedImage!.path);
+      var newImage = _capturedImage;
+
+      if (_cameraController?.description.lensDirection ==
+          CameraLensDirection.front) {
+        var imageEditorOption = ImageEditorOption();
+        imageEditorOption.addOption(FlipOption(horizontal: true));
+
+        newImage = await ImageEditor.editFileImageAndGetFile(
+            file: _capturedImage!, imageEditorOption: imageEditorOption);
+      }
+
+      _newStoryController.addImageBlock(newImage!.path);
       Get.back();
     }
   }

@@ -11,18 +11,22 @@ import 'package:my_story/src/constants/constants.dart';
 import 'package:my_story/src/controllers/new_story/new_story_controller.dart';
 import 'package:my_story/src/themes/color.dart';
 
-class NewStoryScreen extends StatelessWidget {
-  NewStoryScreen({Key? key}) : super(key: key);
+class StoryEditorScreen extends StatelessWidget {
+  StoryEditorScreen({
+    Key? key,
+    this.edit = false,
+  }) : super(key: key);
+
+  final bool edit;
 
   final _newStoryController = Get.find<NewStoryController>();
-
-  final _textController = TextEditingController();
 
   Widget _buildPhotoButton() {
     return Container(
       child: MyIconButton(
         icon: SvgPicture.asset('lib/assets/icons/photo.svg'),
-        onPressed: _openGalleryPhoto,
+        onPressed: _newStoryController.pickPhotoFromGallery,
+        tooltip: 'Add photo from gallery',
       ),
       margin: EdgeInsets.only(
         top: 4,
@@ -38,6 +42,7 @@ class NewStoryScreen extends StatelessWidget {
           width: 24,
         ),
         onPressed: _createTextBlock,
+        tooltip: 'New text block',
       ),
       margin: EdgeInsets.only(
         top: 6,
@@ -49,43 +54,32 @@ class NewStoryScreen extends StatelessWidget {
     return MyIconButton(
       icon: SvgPicture.asset('lib/assets/icons/camera.svg'),
       onPressed: _openCamera,
+      tooltip: 'Take photo',
     );
   }
 
   Widget _buildSaveButton() {
     return MyIconButton(
-      onPressed: _saveStory,
+      onPressed: _newStoryController.saveStory,
       icon: SvgPicture.asset(
         'lib/assets/icons/check.svg',
       ),
+      tooltip: 'Save',
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    print('123');
     return Scaffold(
       backgroundColor: yellowPaperColor,
       appBar: getAppBar(
         bgColor: yellowPaperColor,
         hasBackAction: true,
-        title: 'New Story',
+        title: 'Story Editor',
         titleStyle: TextStyle(
           fontFamily: 'TheGirlNextDoor',
           fontSize: 24,
         ),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(
-              right: 15,
-            ),
-            child: IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset('lib/assets/icons/profile.svg'),
-              padding: EdgeInsets.all(0),
-            ),
-          ),
-        ],
       ),
       body: Container(
         padding: EdgeInsets.only(
@@ -136,7 +130,6 @@ class NewStoryScreen extends StatelessWidget {
                         ),
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.multiline,
-                        autofocus: true,
                       ),
                       SizedBox(
                         height: 16,
@@ -152,66 +145,97 @@ class NewStoryScreen extends StatelessWidget {
                                     .where((block) =>
                                         block.blockType == BlockType.TEXT)
                                     .length;
-                                return TextFormField(
-                                  focusNode: controller.focusNodes[block.id],
-                                  cursorColor: primaryColor,
-                                  onChanged: (value) {
-                                    if (value.isEmpty && numOfTextBlocks > 1) {
-                                      controller.removeTextBlock(index);
-                                      if (controller
-                                          .focusNodes.entries.isNotEmpty) {
-                                        controller.focusNodes.entries.last.value
-                                            .requestFocus();
-                                      }
-                                    } else {
+                                return Container(
+                                  margin: EdgeInsets.only(bottom: 5),
+                                  child: TextFormField(
+                                    focusNode: controller.focusNodes[block.id],
+                                    cursorColor: primaryColor,
+                                    onChanged: (value) {
                                       controller.editTextBlock(index, value);
-                                    }
-                                  },
-                                  autocorrect: false,
-                                  decoration: InputDecoration(
-                                    // hintText: numOfTextBlocks == 1
-                                    //     ? 'Write something...'
-                                    //     : '',
-                                    hintText: 'Write something...',
-                                    border: InputBorder.none,
-                                    hintStyle: TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xff8C8C8C),
-                                      fontWeight: FontWeight.w500,
+                                    },
+                                    autocorrect: false,
+                                    decoration: InputDecoration(
+                                      // hintText: numOfTextBlocks == 1
+                                      //     ? 'Write something...'
+                                      //     : '',
+                                      hintText: 'Write something...',
+                                      border: InputBorder.none,
+                                      hintStyle: TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xff8C8C8C),
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      counterText: '',
+                                      isDense: true,
+                                      isCollapsed: true,
+                                      suffix: index != 0
+                                          ? InkWell(
+                                              splashColor: primaryColor,
+                                              radius: 30,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              onTap: () {
+                                                controller
+                                                    .removeTextBlock(index);
+                                              },
+                                              child: Icon(
+                                                Icons.remove_circle,
+                                                size: 16,
+                                                color: violetColor,
+                                              ),
+                                            )
+                                          : null,
                                     ),
-                                    counterText: '',
-                                    isDense: true,
-                                    isCollapsed: true,
+                                    maxLines: null,
+                                    maxLength:
+                                        AppConstants.MAX_STORY_TITLE_LENGTH,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                    textInputAction: TextInputAction.newline,
+                                    keyboardType: TextInputType.multiline,
                                   ),
-                                  maxLines: null,
-                                  maxLength:
-                                      AppConstants.MAX_STORY_TITLE_LENGTH,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                  textInputAction: TextInputAction.newline,
-                                  keyboardType: TextInputType.multiline,
-                                  autofocus: true,
                                 );
                               }
 
                               if (block.blockType == BlockType.IMAGE) {
                                 var imageFile = File(block.image!);
-                                return ConstrainedBox(
-                                  constraints: BoxConstraints(),
-                                  child: Container(
-                                    margin: EdgeInsets.symmetric(
-                                      vertical: 15,
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(3),
-                                      child: Image.file(
-                                        imageFile,
-                                        fit: BoxFit.cover,
-                                        isAntiAlias: true,
+                                return Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(boxShadow: [
+                                        BoxShadow(
+                                          blurRadius: 5,
+                                          spreadRadius: 1,
+                                          color: Colors.black.withOpacity(0.1),
+                                        ),
+                                      ]),
+                                      margin: EdgeInsets.symmetric(
+                                        vertical: 15,
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(3),
+                                        child: Image.file(
+                                          imageFile,
+                                          fit: BoxFit.cover,
+                                          isAntiAlias: true,
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    Positioned(
+                                      child: IconButton(
+                                        onPressed: () {
+                                          controller.removeImageBlock(index);
+                                        },
+                                        icon: Icon(
+                                          Icons.cancel,
+                                          color: violetColor,
+                                        ),
+                                      ),
+                                      top: 15,
+                                      right: 0,
+                                    ),
+                                  ],
                                 );
                               }
 
@@ -233,9 +257,8 @@ class NewStoryScreen extends StatelessWidget {
 
   void _saveStory() {}
 
-  void _openGalleryPhoto() {}
-
   void _openCamera() {
+    FocusManager.instance.primaryFocus?.unfocus();
     Get.to(CameraScreenShot());
   }
 

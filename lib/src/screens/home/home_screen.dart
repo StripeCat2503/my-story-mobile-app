@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:my_story/src/components/appbar.dart';
-import 'package:my_story/src/config/route_config.dart';
+import 'package:my_story/src/controllers/home/home_controller.dart';
 import 'package:my_story/src/models/story.dart';
 import 'package:my_story/src/screens/home/widgets/empty_story.dart';
 import 'package:my_story/src/screens/home/widgets/story_list.dart';
@@ -10,6 +10,8 @@ import 'package:my_story/src/themes/color.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
+
+  final _controller = Get.find<HomeController>();
 
   var _list = [
     Story(
@@ -33,18 +35,6 @@ class HomeScreen extends StatelessWidget {
           fontFamily: 'TheGirlNextDoor',
           fontSize: 24,
         ),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(
-              right: 15,
-            ),
-            child: IconButton(
-              onPressed: () {},
-              icon: SvgPicture.asset('lib/assets/icons/profile.svg'),
-              padding: EdgeInsets.all(0),
-            ),
-          ),
-        ],
         leading: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: SvgPicture.asset(
@@ -64,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                 top: 10,
               ),
               child: ElevatedButton(
-                onPressed: _newStory,
+                onPressed: _controller.navigateToNewStoryScreen,
                 child: Row(
                   children: [
                     Text(
@@ -107,9 +97,5 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _newStory() {
-    Get.toNamed(RouteConfig.NEW_STORY);
   }
 }

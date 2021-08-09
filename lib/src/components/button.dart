@@ -12,6 +12,8 @@ class BaseButton extends StatelessWidget {
     this.prefix,
     this.suffix,
     this.borderRadius = 0,
+    this.elevation = 0,
+    this.padding,
     this.onPressed,
   }) : super(key: key);
 
@@ -23,40 +25,34 @@ class BaseButton extends StatelessWidget {
   final Widget? prefix;
   final Widget? suffix;
   final double borderRadius;
+  final double elevation;
+  final EdgeInsets? padding;
   final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        InkWell(
-          onTap: onPressed,
+        RawMaterialButton(
+          padding:
+              padding ?? EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+          elevation: elevation,
+          onPressed: onPressed,
+          fillColor: filled ? color : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+            side:
+                filled ? BorderSide.none : BorderSide(width: 1, color: color!),
+          ),
           splashColor: filled ? blackDarkColor : color,
-          child: Ink(
-            color: filled ? primaryColor : Colors.transparent,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(borderRadius),
-                border: Border.fromBorderSide(
-                  filled
-                      ? BorderSide.none
-                      : BorderSide(
-                          width: 1,
-                          color: color as Color,
-                        ),
-                ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                title,
+                style: textStyle,
               ),
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: textStyle,
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
         ),
         if (prefix != null)

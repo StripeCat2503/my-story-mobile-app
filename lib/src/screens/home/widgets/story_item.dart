@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:my_story/src/config/route_config.dart';
+import 'package:my_story/src/enums/story.dart';
 import 'package:my_story/src/models/story.dart';
 import 'package:my_story/src/themes/color.dart';
+import 'package:my_story/src/utils/helpers.dart';
 import 'package:my_story/src/utils/utils.dart';
 
 class StoryItem extends StatelessWidget {
@@ -14,7 +17,7 @@ class StoryItem extends StatelessWidget {
   final Story? story;
 
   Widget _buildPopupMenuButton() {
-    return PopupMenuButton(
+    return PopupMenuButton<StoryAction>(
       padding: EdgeInsets.zero,
       color: Color(0xffFFE7D9),
       itemBuilder: (context) {
@@ -24,7 +27,7 @@ class StoryItem extends StatelessWidget {
     );
   }
 
-  List<PopupMenuEntry> _buildPopupMenuItems() {
+  List<PopupMenuEntry<StoryAction>> _buildPopupMenuItems() {
     return [
       PopupMenuItem(
         child: Row(
@@ -42,6 +45,7 @@ class StoryItem extends StatelessWidget {
             ),
           ],
         ),
+        value: StoryAction.edit,
       ),
       PopupMenuDivider(
         height: 0,
@@ -62,17 +66,9 @@ class StoryItem extends StatelessWidget {
             ),
           ],
         ),
+        value: StoryAction.delete,
       ),
     ];
-  }
-
-  String _getPostDate() {
-    String time =
-        Utils.convertDateToString(date: DateTime.now(), format: 'hh:mm a');
-
-    String date =
-        Utils.convertDateToString(date: DateTime.now(), format: 'MMM dd, yyyy');
-    return '$time - $date';
   }
 
   @override
@@ -86,7 +82,7 @@ class StoryItem extends StatelessWidget {
         elevation: 3,
         child: InkWell(
           splashColor: primaryLightColor,
-          onTap: () {},
+          onTap: _onStoryItemTap,
           child: Ink(
             color: yellowPaperColor,
             child: Container(
@@ -103,7 +99,7 @@ class StoryItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "At ${_getPostDate()}",
+                        "At ${Helpers.getPostDate(DateTime.now())}",
                         style: TextStyle(
                           fontSize: 12,
                           color: blackDarkColor,
@@ -132,5 +128,9 @@ class StoryItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onStoryItemTap() {
+    Get.toNamed(RouteConfig.STORY_READER);
   }
 }

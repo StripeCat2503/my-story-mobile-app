@@ -6,10 +6,12 @@ class MyIconButton extends StatelessWidget {
     Key? key,
     this.onPressed,
     this.icon,
+    this.tooltip,
   }) : super(key: key);
 
   final VoidCallback? onPressed;
   final Widget? icon;
+  final String? tooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,7 @@ class MyIconButton extends StatelessWidget {
       splashColor: primaryLightColor.withOpacity(0.5),
       onPressed: onPressed,
       icon: icon!,
+      tooltip: tooltip,
     );
   }
 }

@@ -57,7 +57,19 @@ AppBar getAppBar({
       title,
       style: titleStyle,
     ),
-    actions: actions,
+    actions: actions ??
+        [
+          Container(
+            margin: EdgeInsets.only(
+              right: 15,
+            ),
+            child: IconButton(
+              onPressed: () {},
+              icon: SvgPicture.asset('lib/assets/icons/profile.svg'),
+              padding: EdgeInsets.all(0),
+            ),
+          ),
+        ],
     automaticallyImplyLeading: false,
   );
 }

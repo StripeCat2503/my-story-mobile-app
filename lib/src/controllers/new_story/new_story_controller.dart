@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:my_story/src/constants/constants.dart';
 import 'package:my_story/src/models/block.dart';
 
@@ -66,4 +67,14 @@ class NewStoryController extends GetxController {
     blocks[index].image = image;
     update();
   }
+
+  void pickPhotoFromGallery() async {
+    final imagePicker = ImagePicker();
+    final image = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      addImageBlock(image.path);
+    }
+  }
+
+  void saveStory() {}
 }

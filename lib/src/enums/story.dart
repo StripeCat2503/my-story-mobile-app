@@ -1,0 +1,1 @@
+enum StoryAction { edit, delete }
